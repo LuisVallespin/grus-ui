@@ -13,15 +13,16 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-
-      - name: Set up Node.js
+      - name: Setup Pnpm
         uses: pnpm/action-setup@v2.2.4
         with:
-          version: '9.0.4'
+          version: "9.0.4"
+
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '21.7.3'
-          cache: 'pnpm'
+          node-version: "21.7.3"
+          cache: "pnpm"
 
       - name: Install dependencies
         run: pnpm install
