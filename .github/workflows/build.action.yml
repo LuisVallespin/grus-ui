@@ -3,10 +3,13 @@ name: Build
 on:
   push:
     branches:
+      - "*"
+  pull_request:
+    branches:
       - master
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
 
     steps:
@@ -35,14 +38,60 @@ jobs:
       - name: Test
         run: pnpm run test:ci
 
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: "9.0.4"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "21.7.3"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
       - name: Build project
         run: pnpm run build
 
       - name: Build Storybook
         run: pnpm run build-storybook
 
-      - name: Deploy Chromatic
-        uses: chromaui/action@latest
+  chromatic:
+    needs: build
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
         with:
-          projectToken: "${{ secrets.CHROMATIC_PROJECT_TOKEN }}"
-          token: "${{ secrets.GITHUB_TOKEN }}"
+          fetch-depth: 0
+
+      - name: Setup Pnpm
+        uses: pnpm/action-setup@v2.2.4
+        with:
+          version: "9.0.4"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "21.7.3"
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Deploy Storybook to Chromatic
+        run: pnpm run chromatic
