@@ -15,11 +15,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Pnpm
-        uses: pnpm/action-setup@v2.2.4
+        uses: pnpm/action-setup@v4
         with:
           version: "9.0.4"
 
@@ -45,8 +43,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
       - name: Setup Pnpm
         uses: pnpm/action-setup@v4
@@ -80,7 +76,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup Pnpm
-        uses: pnpm/action-setup@v2.2.4
+        uses: pnpm/action-setup@v4
         with:
           version: "9.0.4"
 
@@ -93,5 +89,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Deploy Storybook to Chromatic
-        run: pnpm run chromatic
+      - name: Run Chromatic
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+
+      
