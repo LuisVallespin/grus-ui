@@ -62,13 +62,18 @@ jobs:
         run: pnpm run build
 
       - name: Build Storybook
+        if: success()
         run: pnpm run build-storybook
 
+      - name: Tar Build
+        run: tar -cvf dist.tar dist
+
       - name: Upload Artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: dist
-          path: dist 
+          path: dist.tar
 
   chromatic:
     needs: build
@@ -94,15 +99,17 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install
-      
+
       - name: Download Artifact
         uses: actions/download-artifact@v4
         with:
           name: dist
 
+      - name: Unpack Build
+        run: tar -xvf dist.tar
+
       - name: Run Chromatic
+        if: success()
         uses: chromaui/action@latest
         with:
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
-
-      
