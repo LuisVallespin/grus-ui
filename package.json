@@ -28,8 +28,7 @@
     "test": "vitest watch",
     "test:ci": "vitest run",
     "test:ci:coverage": "vitest run --coverage",
-    "prepare": "husky",
-    "chromatic": "chromatic --exit-zero-on-changes"
+    "prepare": "husky"
   },
   "dependencies": {
     "react": "^18.3.1",
